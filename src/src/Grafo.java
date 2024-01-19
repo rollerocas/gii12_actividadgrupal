@@ -3,6 +3,7 @@ package src;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class Grafo {
 		String separador = System.getProperty("file.separator");
 		String pathFicheroNodos = directorioProyecto + separador + nombreFicheroNodos;
 		String pathFicheroAristas = directorioProyecto + separador + nombreFicheroAristas;
-		
+
 		// Inicializacion de variables
 		this.nodos = new LinkedList<NodoGrafo>();
 		this.aristas = new LinkedList<Arista>();
@@ -167,6 +168,7 @@ public class Grafo {
 		// insertamos la arista
 		this.aristas.add(aristaParaInsertar);
 		// ordenar la lista de aristas
+//		this.aristas.sort(null);
 		// TODO
 		return true;
 	}
@@ -185,6 +187,12 @@ public class Grafo {
 	// borra la arista definida por las dos claves pasadas por parámetro si existe
 	// en el grafo y devuelve true. Si no existiera, devuelve false.
 	public boolean borrarArista(String clave1, String clave2) {
+		// deben existir los nodos
+
+		// debe existir la arista previamente
+
+		// borrar la arista
+
 		// TODO
 		return false;
 	}
@@ -242,9 +250,12 @@ public class Grafo {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("NODOS:\n");
-		sb.append("──────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n");
-		sb.append("| CLAVE                   | ROTULO               | DIRECCION                    | MUNICIPIO    | LOCALIDAD       |\n");
-		sb.append("|─────────────────────────├──────────────────────|──────────────────────────────|──────────────|─────────────────|\n");
+		sb.append(
+				"──────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n");
+		sb.append(
+				"| CLAVE                   | ROTULO               | DIRECCION                    | MUNICIPIO    | LOCALIDAD       |\n");
+		sb.append(
+				"|─────────────────────────├──────────────────────|──────────────────────────────|──────────────|─────────────────|\n");
 		for (Iterator<NodoGrafo> iterator = this.nodos.iterator(); iterator.hasNext();) {
 			sb.append(iterator.next().toString());
 		}
@@ -260,6 +271,7 @@ public class Grafo {
 
 	// devuelve el vector de distancias mínimas del algoritmo de Dijkstra.
 	public List<Double> Dijkstra(String clave) {
+		// TODO
 		return null;
 	}
 
@@ -267,6 +279,38 @@ public class Grafo {
 	// por parámetro.
 	// Si no existiera alguno de los nodos, devuelve null.
 	public List<String> Dijkstra(String clave1, String clave2) {
-		return null;
+		// PASO 1: Se escoge de los nodos adyacentes aquel que tiene un menor peso en la
+		// arista
+		// se recorre la lista de aristas y se coge la de menor peso
+		
+		// initializar variables
+		Arista aristaMinima = null;
+		String nodoActual = clave1;
+		List<String> caminoMinimo = new ArrayList<String>();
+		
+		// insertamos el primer vertice del camino
+		caminoMinimo.add(clave1);
+		
+		while (nodoActual != clave2) {
+			// recorremos la lista
+			for (Iterator<Arista> iterator = this.aristas.iterator(); iterator.hasNext();) {
+				Arista arista = iterator.next();
+				// solo los que empiezan por el nodo actual
+				if (arista.getClave1().equals(nodoActual)) {
+					// si esta vacia guardo la primera que aparece
+					if (aristaMinima == null) {
+						aristaMinima = arista;
+					} else if (aristaMinima.getPeso() > arista.getPeso()) {
+						// si hay una menor se guarda como minima
+						aristaMinima = arista;
+					}
+				}
+			}
+			// el siguiente nodo o vertice es			 GIJÓN-2   AVILÉS-17
+			nodoActual = aristaMinima.getClave2();
+			caminoMinimo.add(nodoActual);			
+		}
+
+		return caminoMinimo;
 	}
 }
