@@ -4,9 +4,15 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Set;
 
 public class Grafo {
 
@@ -91,10 +97,11 @@ public class Grafo {
 			return false;
 		}
 		// borramos sus aristas
-		for (Iterator<Arista> iterator = this.aristas.iterator(); iterator.hasNext();) {
+		Iterator<Arista> iterator = this.aristas.iterator();
+		while (iterator.hasNext()) {
 			Arista arista = iterator.next();
 			if (arista.contieneClave(clave)) {
-				this.aristas.remove(arista);
+				iterator.remove();
 			}
 		}
 		// obtengo su nodo
@@ -102,8 +109,9 @@ public class Grafo {
 		// borramos su nodo
 		if (nodoParaBorrar != null) {
 			this.nodos.remove(nodoParaBorrar);
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	/**
@@ -115,8 +123,10 @@ public class Grafo {
 	 */
 	public boolean existeNodo(String clave) {
 		// recorro la lista de nodos buscando su clave
-		for (Iterator<NodoGrafo> iterator = this.nodos.iterator(); iterator.hasNext();) {
-			if (iterator.next().getClave().equals(clave)) {
+		Iterator<NodoGrafo> iterator = this.nodos.iterator();
+		while (iterator.hasNext()) {
+			NodoGrafo nodo = iterator.next();
+			if (nodo.getClave().equals(clave)) {
 				return true;
 			}
 		}
@@ -134,7 +144,7 @@ public class Grafo {
 		// recorro la lista de nodos buscando su clave
 		for (Iterator<NodoGrafo> iterator = this.nodos.iterator(); iterator.hasNext();) {
 			NodoGrafo nodo = iterator.next();
-			if (nodo.getClave() == clave) {
+			if (nodo.getClave().equals(clave)) {
 				return nodo;
 			}
 		}
@@ -150,10 +160,17 @@ public class Grafo {
 		return this.nodos.size();
 	}
 
-	// si existen las dos claves pasadas por parámetro, y la arista no existe
-	// previamente en el grafo, inserta la arista entre los nodos del grafo
-	// correspondientes a ambas claves con el peso pasado por parámetro y devuelve
-	// true. En caso contrario, no se realiza la inserción y devuelve false.
+	/**
+	 * Si existen las dos claves pasadas por parámetro, y la arista no existe
+	 * previamente en el grafo, inserta la arista entre los nodos del grafo
+	 * correspondientes a ambas claves con el peso pasado por parámetro y devuelve
+	 * true. En caso contrario, no se realiza la inserción y devuelve false.
+	 * 
+	 * @param clave1
+	 * @param clave2
+	 * @param peso
+	 * @return boolean
+	 */
 	public boolean insertarArista(String clave1, String clave2, Double peso) {
 		// deben existir los nodos
 		if (!this.existeNodo(clave1) || !this.existeNodo(clave2)) {
@@ -167,9 +184,6 @@ public class Grafo {
 		Arista aristaParaInsertar = new Arista(clave1, clave2, peso);
 		// insertamos la arista
 		this.aristas.add(aristaParaInsertar);
-		// ordenar la lista de aristas
-//		this.aristas.sort(null);
-		// TODO
 		return true;
 	}
 
@@ -181,19 +195,32 @@ public class Grafo {
 	 * @return boolean
 	 */
 	public boolean insertarAristaObject(Arista arista) {
-		return this.insertarArista(arista.getClave1(), arista.getClave2(), arista.getPeso());
+		return this.insertarArista(arista.getOrigen(), arista.getDestino(), arista.getPeso());
 	}
 
-	// borra la arista definida por las dos claves pasadas por parámetro si existe
-	// en el grafo y devuelve true. Si no existiera, devuelve false.
+	/**
+	 * Borra la arista definida por las dos claves pasadas por parámetro si existe
+	 * en el grafo y devuelve true. Si no existiera, devuelve false.
+	 * 
+	 * @param clave1
+	 * @param clave2
+	 * @return boolean
+	 */
 	public boolean borrarArista(String clave1, String clave2) {
 		// deben existir los nodos
-
+		if (!this.existeNodo(clave1) || !this.existeNodo(clave2)) {
+			return false;
+		}
 		// debe existir la arista previamente
-
+		if (!this.existeArista(clave1, clave2)) {
+			return false;
+		}
 		// borrar la arista
-
-		// TODO
+		Arista aristaParaBorrar = this.buscaArista(clave1, clave2);
+		if (aristaParaBorrar != null) {
+			this.aristas.remove(aristaParaBorrar);
+			return true;
+		}
 		return false;
 	}
 
@@ -208,8 +235,10 @@ public class Grafo {
 	public boolean existeArista(String clave1, String clave2) {
 		Arista aristaParaBuscar = new Arista(clave1, clave2);
 		// recorro la lista de aristas buscando sus claves
-		for (Iterator<Arista> iterator = this.aristas.iterator(); iterator.hasNext();) {
-			if (iterator.next().tieneMismosVertices(aristaParaBuscar)) {
+		Iterator<Arista> iterator = this.aristas.iterator();
+		while (iterator.hasNext()) {
+			Arista arista = iterator.next();
+			if (arista.tieneMismosVertices(aristaParaBuscar)) {
 				return true;
 			}
 		}
@@ -238,16 +267,18 @@ public class Grafo {
 	/**
 	 * Devuelve el número de aristas del grafo.
 	 * 
-	 * @return
+	 * @return int
 	 */
 	public int numeroAristas() {
 		return this.aristas.size();
 	}
 
-	// devuelve la representación en String del grafo en formato de listas de
-	// adyacencias. El siguiente ejemplo muestra la cadena correspondiente al grafo
-	// de la figura:
-	public String toString() {
+	/**
+	 * Devuelve el listado de nodos y el listado de aristas en formato tabla
+	 * 
+	 * @return String
+	 */
+	public String toStringTable() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("NODOS:\n");
 		sb.append(
@@ -269,48 +300,204 @@ public class Grafo {
 		return sb.toString();
 	}
 
-	// devuelve el vector de distancias mínimas del algoritmo de Dijkstra.
-	public List<Double> Dijkstra(String clave) {
-		// TODO
-		return null;
-	}
-
-	// devuelve el camino de distancia mínima entre los nodos cuyas claves se pasan
-	// por parámetro.
-	// Si no existiera alguno de los nodos, devuelve null.
-	public List<String> Dijkstra(String clave1, String clave2) {
-		// PASO 1: Se escoge de los nodos adyacentes aquel que tiene un menor peso en la
-		// arista
-		// se recorre la lista de aristas y se coge la de menor peso
-		
-		// initializar variables
-		Arista aristaMinima = null;
-		String nodoActual = clave1;
-		List<String> caminoMinimo = new ArrayList<String>();
-		
-		// insertamos el primer vertice del camino
-		caminoMinimo.add(clave1);
-		
-		while (nodoActual != clave2) {
-			// recorremos la lista
-			for (Iterator<Arista> iterator = this.aristas.iterator(); iterator.hasNext();) {
-				Arista arista = iterator.next();
-				// solo los que empiezan por el nodo actual
-				if (arista.getClave1().equals(nodoActual)) {
-					// si esta vacia guardo la primera que aparece
-					if (aristaMinima == null) {
-						aristaMinima = arista;
-					} else if (aristaMinima.getPeso() > arista.getPeso()) {
-						// si hay una menor se guarda como minima
-						aristaMinima = arista;
+	/**
+	 * Ordena el listado de las aristas del grafo de manera alfabetica y numerica
+	 */
+	public void ordenaAristas() {
+		this.aristas.sort(new Comparator<Arista>() {
+			@Override
+			public int compare(Arista arista1, Arista arista2) {
+				if (!arista1.getOrigen().equals(arista2.getOrigen())) {
+					String[] clave1 = arista1.getOrigen().split("-");
+					String[] clave2 = arista2.getOrigen().split("-");
+					if (clave1[0].equals(clave2[0])) {
+						return Integer.parseInt(clave1[1]) - Integer.parseInt(clave2[1]);
+					} else {
+						return arista1.getOrigen().compareTo(arista2.getOrigen());
+					}
+				} else {
+					String[] clave1 = arista1.getDestino().split("-");
+					String[] clave2 = arista2.getDestino().split("-");
+					if (clave1[0].equals(clave2[0])) {
+						return Integer.parseInt(clave1[1]) - Integer.parseInt(clave2[1]);
+					} else {
+						return arista1.getDestino().compareTo(arista2.getDestino());
 					}
 				}
 			}
-			// el siguiente nodo o vertice es			 GIJÓN-2   AVILÉS-17
-			nodoActual = aristaMinima.getClave2();
-			caminoMinimo.add(nodoActual);			
+		});
+	}
+
+	/**
+	 * Ordena los nodos del grafo de manera alfabetica y numerica
+	 */
+	public void ordenaNodos() {
+		this.nodos.sort(new Comparator<NodoGrafo>() {
+			@Override
+			public int compare(NodoGrafo nodo1, NodoGrafo nodo2) {
+				String[] clave1 = nodo1.getClave().split("-");
+				String[] clave2 = nodo2.getClave().split("-");
+				if (clave1[0].equals(clave2[0])) {
+					return Integer.parseInt(clave1[1]) - Integer.parseInt(clave2[1]);
+				} else {
+					return nodo1.getClave().compareTo(nodo2.getClave());
+				}
+			}
+		});
+
+	}
+
+	/**
+	 * Devuelve la representación en String del grafo en formato de listas de
+	 * adyacencias
+	 * 
+	 * @return String
+	 */
+	public String toString() {
+		// ordeno las listas por si huebiera habido inserciones/borrados
+		this.ordenaNodos();
+		this.ordenaAristas();
+
+		StringBuilder sb = new StringBuilder();
+
+		// para cada uno de los nodos
+		for (NodoGrafo nodo : this.nodos) {
+			sb.append(this.paddingRigthWithSpaces("\n" + nodo.getClave() + ": ", 33));
+			// Explorar las aristas del nodo actual (asumimos que no puede haber aristas
+			// repetidas)
+			for (Arista arista : this.aristas) {
+				if (arista.getOrigen().equals(nodo.getClave())) {
+					// si es clave origen
+					sb.append(this.paddingRigthWithSpaces(arista.getDestino() + "(" + arista.getPeso() + "),", 33));
+				} else if (arista.getDestino().equals(nodo.getClave())) {
+					// si es clave destino
+					sb.append(this.paddingRigthWithSpaces(arista.getOrigen() + "(" + arista.getPeso() + "),", 33));
+				}
+			}
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * devuelve el vector de distancias mínimas del algoritmo de Dijkstra.
+	 * 
+	 * @param clave
+	 * @return List<Double>
+	 */
+	public List<Double> Dijkstra(String clave) {
+		NodoGrafo inicio = this.buscaNodo(clave);
+		int cantidadNodos = this.nodos.size();
+		List<Double> distancias = new ArrayList<>(Collections.nCopies(cantidadNodos, Double.POSITIVE_INFINITY));
+
+		Set<NodoGrafo> visitados = new HashSet<>();
+		distancias.set(this.nodos.indexOf(inicio), 0.00);
+
+		// Cola de prioridad para obtener el nodo con la distancia mínima
+		PriorityQueue<NodoGrafo> colaPrioridad = new PriorityQueue<>(
+				Comparator.comparingDouble(n -> distancias.get(this.nodos.indexOf(n))));
+		colaPrioridad.add(inicio);
+
+		while (!colaPrioridad.isEmpty()) {
+			// Obtener el nodo con la distancia mínima
+			NodoGrafo actual = colaPrioridad.poll();
+			visitados.add(actual);
+
+			// Explorar las aristas del nodo actual
+			for (Arista arista : this.aristas) {
+				if ((arista.getOrigen().equals(actual.getClave()) || arista.getDestino().equals(actual.getClave()))
+						&& !visitados.contains(buscaNodo(arista.getOtroExtremo(actual.getClave())))) {
+					NodoGrafo nodoDestino = buscaNodo(arista.getOtroExtremo(actual.getClave()));
+					// Calcular la nueva distancia desde el nodo de inicio hasta el nodo destino
+					Double nuevaDistancia = distancias.get(this.nodos.indexOf(actual)) + arista.getPeso();
+					int indiceDestino = this.nodos.indexOf(nodoDestino);
+
+					// Actualizar la distancia si la nueva distancia es menor
+					if (nuevaDistancia < distancias.get(indiceDestino)) {
+						distancias.set(indiceDestino, nuevaDistancia);
+						colaPrioridad.add(nodoDestino);
+					}
+				}
+			}
 		}
 
-		return caminoMinimo;
+		return distancias;
+	}
+
+	/**
+	 * Devuelve el camino de distancia mínima entre los nodos cuyas claves se pasan
+	 * por parámetro. Si no existiera alguno de los nodos, devuelve null.
+	 * 
+	 * @param clave1
+	 * @param clave2
+	 * @return List<String>
+	 */
+	public List<String> Dijkstra(String clave1, String clave2) {
+		NodoGrafo inicio = this.buscaNodo(clave1);
+		NodoGrafo fin = this.buscaNodo(clave2);
+
+		List<Double> distancias = this.Dijkstra(inicio.getClave());
+
+		if (!this.nodos.contains(inicio) || !this.nodos.contains(fin)) {
+			return null; // Al menos uno de los nodos no existe en el grafo
+		}
+
+		List<NodoGrafo> camino = new ArrayList<>();
+		int indiceFin = this.nodos.indexOf(fin);
+
+		if (distancias.get(indiceFin) == Double.POSITIVE_INFINITY) {
+			return null; // No hay camino entre los nodos
+		}
+
+		// Reconstruir el camino desde el nodo de destino hasta el nodo de inicio
+		while (!inicio.equals(fin)) {
+			camino.add(fin);
+
+			// Encontrar la arista que lleva al nodo anterior en el camino
+			for (Arista arista : this.aristas) {
+				String otroExtremo = arista.getOtroExtremo(fin.getClave());
+				if ((arista.getDestino().equals(fin.getClave()) || arista.getOrigen().equals(fin.getClave()))
+						&& distancias.get(this.nodos.indexOf(fin)) == distancias
+								.get(this.nodos.indexOf(buscaNodo(otroExtremo))) + arista.getPeso()) {
+					fin = buscaNodo(otroExtremo);
+					break;
+				}
+			}
+		}
+
+		// Agregar el nodo de inicio al camino
+		camino.add(inicio);
+		Collections.reverse(camino);
+
+		// para cumplir con el enunciado pasamos los nodos a String, solo con las claves
+		return this.convertirNodosAClaves(camino);
+	}
+
+	/**
+	 * Método para convertir una lista de nodos a una lista de claves
+	 * 
+	 * @param nodos
+	 * @return
+	 */
+	public List<String> convertirNodosAClaves(List<NodoGrafo> nodos) {
+		List<String> claves = new ArrayList<>();
+		for (NodoGrafo nodo : nodos) {
+			claves.add(nodo.getClave());
+		}
+		return claves;
+	}
+
+	public String paddingRigthWithSpaces(String inputString, int maxLength) {
+		int totalSpacesToAdd = maxLength - inputString.length();
+		StringBuilder sb = new StringBuilder();
+		if (totalSpacesToAdd < 0) {
+			sb.append(inputString.substring(0, maxLength - 3));
+			sb.append("...");
+		} else {
+			sb.append(inputString);
+			for (int i = 0; i < totalSpacesToAdd; i++) {
+				sb.append(' ');
+			}
+		}
+		return sb.toString();
 	}
 }

@@ -36,25 +36,10 @@ public class Gasolinera implements NodoGrafo {
 	@Override
 	public String toString() {
 		return ("| " 
-				+ this.paddingRigthWithSpaces(this.clave, 23) + " | " 
-				+ this.paddingRigthWithSpaces(this.rotulo, 20) + " | " 
-				+ this.paddingRigthWithSpaces(this.direccion, 28) + " | "
-				+ this.paddingRigthWithSpaces(this.municipio, 12) + " | "
-				+ this.paddingRigthWithSpaces(this.localidad, 15) + " |\n");
-	}
-
-	public String paddingRigthWithSpaces(String inputString, int maxLength) {
-		int totalSpacesToAdd = maxLength - inputString.length();
-		StringBuilder sb = new StringBuilder();
-		if (totalSpacesToAdd < 0) {
-			sb.append(inputString.substring(0,maxLength-3));
-			sb.append("...");
-		} else {	
-			sb.append(inputString);
-			for (int i = 0; i < totalSpacesToAdd; i++) {
-				sb.append(' ');
-			}
-		}		
-		return sb.toString();
-	}
+				+ Principal.paddingRigthWithSpaces(this.clave, 23) + " | " 
+				+ Principal.paddingRigthWithSpaces(this.rotulo, 20) + " | " 
+				+ Principal.paddingRigthWithSpaces(this.direccion, 28) + " | "
+				+ Principal.paddingRigthWithSpaces(this.municipio, 12) + " | "
+				+ Principal.paddingRigthWithSpaces(this.localidad, 15) + " |\n");
+	}	
 }

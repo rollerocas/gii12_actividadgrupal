@@ -2,60 +2,74 @@ package src;
 
 public class Arista {
 	public final Integer COLUMNAS_DE_DATOS = 3;
-	
-	private String clave1;
-	private String clave2;
+
+	private String origen;
+	private String destino;
 	private Double peso;
-	
+
 	public Arista(String clave1, String clave2, Double peso) {
-		this.clave1 = clave1;
-		this.clave2 = clave2;
+		this.origen = clave1;
+		this.destino = clave2;
 		this.peso = peso;
 	}
-	
+
 	public Arista(String clave1, String clave2) {
-		this.clave1 = clave1;
-		this.clave2 = clave2;
+		this.origen = clave1;
+		this.destino = clave2;
 		this.peso = null;
 	}
-	
+
 	public Arista(String[] datos) throws Exception {
 		if (datos.length != this.COLUMNAS_DE_DATOS) {
 			throw new Exception("El fichero de datos de las aristas no es correcto");
 		}
-		this.clave1 = datos[0];
-		this.clave2 = datos[1];
-		this.peso = Double.parseDouble(datos[2].replace(",","."));
+		this.origen = datos[0];
+		this.destino = datos[1];
+		this.peso = Double.parseDouble(datos[2].replace(",", "."));
 	}
-	
+
 	public boolean contieneClave(String clave) {
-		if (this.clave1 == clave || this.clave2 == clave) {
+		if (this.origen.equals(clave) || this.destino.equals(clave)) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public boolean tieneMismosVertices(Arista arista) {
-		if (this.clave1 == arista.getClave1() && this.clave2 == arista.getClave2()) {
+		if (this.origen.equals(arista.getOrigen()) && this.destino.equals(arista.getDestino())
+				|| this.destino.equals(arista.getOrigen()) && this.origen.equals(arista.getDestino())) {
 			return true;
 		}
 		return false;
 	}
-	
-	public String getClave1() {
-		return clave1;
+
+	// Método para obtener el otro extremo de la arista
+	public String getOtroExtremo(String actual) {
+		if (this.contieneClave(actual)) {
+			if (origen.equals(actual)) {
+				return destino;
+			} else {
+				return origen;
+			}
+		} else {
+			return null;
+		}
 	}
 
-	public void setClave1(String clave1) {
-		this.clave1 = clave1;
+	public String getOrigen() {
+		return origen;
 	}
 
-	public String getClave2() {
-		return clave2;
+	public void setOrigen(String clave1) {
+		this.origen = clave1;
 	}
 
-	public void setClave2(String clave2) {
-		this.clave2 = clave2;
+	public String getDestino() {
+		return destino;
+	}
+
+	public void setDestino(String clave2) {
+		this.destino = clave2;
 	}
 
 	public Double getPeso() {
@@ -65,24 +79,26 @@ public class Arista {
 	public void setPeso(Double peso) {
 		this.peso = peso;
 	}
-	
+
 	@Override
 	public String toString() {
-		return ("| "+this.paddingRigthWithSpaces(this.clave1, 23)+" | "+this.paddingRigthWithSpaces(this.clave2, 23)+" | "+this.paddingRigthWithSpaces(this.peso.toString(), 12)+" |\n");
+		return ("| " + Principal.paddingRigthWithSpaces(this.origen, 23) + " | "
+				+ Principal.paddingRigthWithSpaces(this.destino, 23) + " | "
+				+ Principal.paddingRigthWithSpaces(this.peso.toString(), 12) + " |\n");
 	}
-	
+
 	public String paddingRigthWithSpaces(String inputString, int maxLength) {
 		int totalSpacesToAdd = maxLength - inputString.length();
 		StringBuilder sb = new StringBuilder();
 		if (totalSpacesToAdd < 0) {
-			sb.append(inputString.substring(0,maxLength-3));
+			sb.append(inputString.substring(0, maxLength - 3));
 			sb.append("...");
-		} else {	
+		} else {
 			sb.append(inputString);
 			for (int i = 0; i < totalSpacesToAdd; i++) {
 				sb.append(' ');
 			}
-		}		
+		}
 		return sb.toString();
 	}
 }
