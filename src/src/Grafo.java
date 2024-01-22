@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -362,16 +361,16 @@ public class Grafo {
 
 		// para cada uno de los nodos
 		for (NodoGrafo nodo : this.nodos) {
-			sb.append(this.paddingRigthWithSpaces("\n" + nodo.getClave() + ": ", 33));
+			sb.append(Principal.paddingRigthWithSpaces("\n" + nodo.getClave() + ": ", 33));
 			// Explorar las aristas del nodo actual (asumimos que no puede haber aristas
 			// repetidas)
 			for (Arista arista : this.aristas) {
 				if (arista.getOrigen().equals(nodo.getClave())) {
 					// si es clave origen
-					sb.append(this.paddingRigthWithSpaces(arista.getDestino() + "(" + arista.getPeso() + "),", 33));
+					sb.append(Principal.paddingRigthWithSpaces(arista.getDestino() + "(" + arista.getPeso() + "),", 33));
 				} else if (arista.getDestino().equals(nodo.getClave())) {
 					// si es clave destino
-					sb.append(this.paddingRigthWithSpaces(arista.getOrigen() + "(" + arista.getPeso() + "),", 33));
+					sb.append(Principal.paddingRigthWithSpaces(arista.getOrigen() + "(" + arista.getPeso() + "),", 33));
 				}
 			}
 		}
@@ -473,7 +472,7 @@ public class Grafo {
 	}
 
 	/**
-	 * Método para convertir una lista de nodos a una lista de claves
+	 * Método auxiliar para convertir una lista de nodos a una lista de claves
 	 * 
 	 * @param nodos
 	 * @return
@@ -484,20 +483,5 @@ public class Grafo {
 			claves.add(nodo.getClave());
 		}
 		return claves;
-	}
-
-	public String paddingRigthWithSpaces(String inputString, int maxLength) {
-		int totalSpacesToAdd = maxLength - inputString.length();
-		StringBuilder sb = new StringBuilder();
-		if (totalSpacesToAdd < 0) {
-			sb.append(inputString.substring(0, maxLength - 3));
-			sb.append("...");
-		} else {
-			sb.append(inputString);
-			for (int i = 0; i < totalSpacesToAdd; i++) {
-				sb.append(' ');
-			}
-		}
-		return sb.toString();
 	}
 }

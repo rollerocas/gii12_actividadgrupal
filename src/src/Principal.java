@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Principal {
+	// Nombres de ficheros a cargar ubicados en el directorio raiz del proyecto
 	public final static String FICHERO_NODOS = "gasolineras.csv";
 	public final static String FICHERO_ARISTAS = "distancias-gasolineras.csv";
 
@@ -38,6 +39,11 @@ public class Principal {
 		calcularCaminoMinimo(grafo, "AVILÉS-7", "CORVERA DE ASTURIAS-28");
 	}
 
+	/**
+	 * Crea un nuevo grafo a la vez que muestra mensajes en consola
+	 * 
+	 * @return Grafo
+	 */
 	public static Grafo crearGrafo() {
 		System.out.println(
 				"\n──────────────────────────────────────────────────────────────────────────────────────────────────────────────────");
@@ -55,6 +61,12 @@ public class Principal {
 		return null;
 	}
 
+	/**
+	 * Muestra el grafo como su deficinicion formal de lista de nodos y lista
+	 * aristas ordenada
+	 * 
+	 * @param grafo
+	 */
 	public static void visualizarTablas(Grafo grafo) {
 		System.out.println(
 				"\n──────────────────────────────────────────────────────────────────────────────────────────────────────────────────");
@@ -62,6 +74,11 @@ public class Principal {
 		System.out.println(grafo.toStringTable());
 	}
 
+	/**
+	 * Muestra el grafo como listas de adyacencias para cada uno de sus nodos
+	 * 
+	 * @param grafo
+	 */
 	public static void visualizarListasAdyacencia(Grafo grafo) {
 		System.out.println(
 				"\n──────────────────────────────────────────────────────────────────────────────────────────────────────────────────");
@@ -69,6 +86,13 @@ public class Principal {
 		System.out.println(grafo.toString());
 	}
 
+	/**
+	 * Calcula el camino minimo a la vez que muestra mensajes sobre su resultado
+	 * 
+	 * @param grafo
+	 * @param origen
+	 * @param destino
+	 */
 	public static void calcularCaminoMinimo(Grafo grafo, String origen, String destino) {
 		System.out.println(
 				"\n──────────────────────────────────────────────────────────────────────────────────────────────────────────────────");
@@ -81,6 +105,13 @@ public class Principal {
 		}
 	}
 
+	/**
+	 * Calcula y muestra por consola el vector de distancias minimas partiendo de
+	 * una clave
+	 * 
+	 * @param grafo
+	 * @param clave
+	 */
 	public static void vectorDistanciasMinimas(Grafo grafo, String clave) {
 		System.out.println(
 				"\n──────────────────────────────────────────────────────────────────────────────────────────────────────────────────");
@@ -95,6 +126,12 @@ public class Principal {
 		System.out.println(vectorDistanciasMinimasDecimal.toString());
 	}
 
+	/**
+	 * Borra un nodo del grafo a la vez que muestra su resultado por consola
+	 * 
+	 * @param grafo
+	 * @param clave
+	 */
 	public static void borrarNodo(Grafo grafo, String clave) {
 		System.out.println(
 				"\n──────────────────────────────────────────────────────────────────────────────────────────────────────────────────");
@@ -107,6 +144,13 @@ public class Principal {
 		}
 	}
 
+	/**
+	 * Borra una arista del grafo a la vez que muestra su resultado por consola
+	 * 
+	 * @param grafo
+	 * @param origen
+	 * @param destino
+	 */
 	public static void borrarArista(Grafo grafo, String origen, String destino) {
 		System.out.println(
 				"\n──────────────────────────────────────────────────────────────────────────────────────────────────────────────────");
@@ -119,6 +163,16 @@ public class Principal {
 		}
 	}
 
+	/**
+	 * Metodo auxiliar usado en las clases para formatear en columnas las salidas de
+	 * consola (toString) a un determenido ancho, dado una cadena y una longitud
+	 * maxima devuelve el string rellenado con espacios o acortado con puntos
+	 * suspensivos
+	 * 
+	 * @param inputString
+	 * @param maxLength
+	 * @return String
+	 */
 	public static String paddingRigthWithSpaces(String inputString, int maxLength) {
 		int totalSpacesToAdd = maxLength - inputString.length();
 		StringBuilder sb = new StringBuilder();

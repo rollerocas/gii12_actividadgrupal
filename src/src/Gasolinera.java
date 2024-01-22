@@ -9,6 +9,15 @@ public class Gasolinera implements NodoGrafo {
 	private String municipio;
 	private String localidad;
 
+	/**
+	 * Crea una gasolinera dados todos los parametros
+	 * 
+	 * @param clave
+	 * @param rotulo
+	 * @param direccion
+	 * @param municipio
+	 * @param localidad
+	 */
 	public Gasolinera(String clave, String rotulo, String direccion, String municipio, String localidad) {
 		this.clave = clave;
 		this.rotulo = rotulo;
@@ -17,6 +26,12 @@ public class Gasolinera implements NodoGrafo {
 		this.localidad = localidad;
 	}
 
+	/**
+	 * Crea una gasolinera dado un array de String proveniente del CSV
+	 * 
+	 * @param datos
+	 * @throws Exception
+	 */
 	public Gasolinera(String[] datos) throws Exception {
 		if (datos.length != this.COLUMNAS_DE_DATOS) {
 			throw new Exception("El fichero de datos de las gasolineras no es correcto");
@@ -35,11 +50,10 @@ public class Gasolinera implements NodoGrafo {
 
 	@Override
 	public String toString() {
-		return ("| " 
-				+ Principal.paddingRigthWithSpaces(this.clave, 23) + " | " 
-				+ Principal.paddingRigthWithSpaces(this.rotulo, 20) + " | " 
+		return ("| " + Principal.paddingRigthWithSpaces(this.clave, 23) + " | "
+				+ Principal.paddingRigthWithSpaces(this.rotulo, 20) + " | "
 				+ Principal.paddingRigthWithSpaces(this.direccion, 28) + " | "
 				+ Principal.paddingRigthWithSpaces(this.municipio, 12) + " | "
 				+ Principal.paddingRigthWithSpaces(this.localidad, 15) + " |\n");
-	}	
+	}
 }
